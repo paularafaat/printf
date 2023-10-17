@@ -1,45 +1,116 @@
 #include "main.h"
+#define BUFF_SIZE 1024
 /**
  * _printf - function that prints %c %s %
  * @format: pointer
  * Return: number of chara printed
  */
 int _printf(const char *format, ...)
-{int chara_printed = 0;
-	va_list args;
+{
+    va_list args;
+    int count = 0;
+    int printed = 0;
+    int buff_ind = 0;
+    char buffer[BUFF_SIZE];
 
-	if (format == NULL)
-		return (-1);
-	va_start(args, format);
-	while (*format)
-	{
-		if (*format == '%')
-		{
-			format++;
-			if (*format == '%')
-			{write(1, "%", 1);
-				chara_printed++;
-			}
-			else if (*format == 'c')
-			{char c = (char)va_arg(args, int);
-				write(1, &c, 1);
-				chara_printed++;
-			}
-			else if (*format == 's')
-			{
-				char *s = va_arg(args, char *);
-				int len = 0;
+    va_start(args, format);
 
-				while (s[len] != '\0')
-					len++;
-				write(1, s, len);
-				chara_printed += len; }
-		}
-		else
-		{write(1, format, 1);
-			chara_printed++; }
-	format++;
-	}
-	va_end(args);
-return (chara_printed);
+    while (*format)
+    {
+        if (*format == '%')
+        {
+            format++;
+
+            if (*format == '%')
+            {
+                buffer[buff_ind++] = '%';
+                if (buff_ind == BUFF_SIZE)
+                {
+                    print_buffer(buffer, &buff_ind);
+                    count += buff_ind;
+                }
+            }
+            else if (*format == 'c')
+            {
+                int ch = va_arg(args, int);
+                buffer[buff_ind++] = ch;
+                if (buff_ind == BUFF_SIZE)
+                {
+                    print_buffer(buffer, &buff_ind);
+                    count += buff_ind;
+                }
+            }
+            else if (*format == 's')
+            {
+                char *str = va_arg(args, char *);
+                while (*str)
+                {
+                    buffer[buff_ind++] = *str;
+                    str++;
+                    if (buff_ind == BUFF_SIZE)
+                    {
+                        print_buffer(buffer, &buff_ind);
+                        count += buff_ind;
+                    }
+                }
+            }
+            else if (*format == 'd' || *format == 'i')
+            {
+                int value = va_arg(args, int);
+                printed = print_integer(value);
+                count += printed;
+            }
+        }
+        else
+        {
+            buffer[buff_ind++] = *format;
+            if (buff_ind == BUFF_SIZE)
+            {
+                print_buffer(buffer, &buff_ind);
+                count += buff_ind;
+            }
+        }
+
+        format++;
+    }
+
+    print_buffer(buffer, &buff_ind);
+    count += buff_ind;
+
+    va_end(args);
+
+    return count;
+}
+/**
+ * print_integer - to print integer
+ * @value: int
+ * Return: integer
+*/
+int print_integer(int value)
+{
+    char buffer[32];
+    int printed = snprintf(buffer, sizeof(buffer), "%d", value);
+    for (int i = 0; i < printed; i++)
+    {
+        putchar(buffer[i]);
+    }
+    return printed;
+}
+/**
+ * print_buffer - function ot print buffer
+ * @buffer: array
+ * @buff_ind: pointer
+ * Return: nothing
+*/
+void print_buffer(char buffer[], int *buff_ind)
+{
+    if (*buff_ind > 0)
+    {
+        for (int i = 0; i < *buff_ind; i++)
+        {
+            putchar(buffer[i]);
+        }
+    }
+
+    *buff_ind = 0;
 }
