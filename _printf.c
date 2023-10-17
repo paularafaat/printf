@@ -13,8 +13,7 @@ int _printf(const char *format, ...)
 		return (-1);
 	va_start(args, format);
 	while (*format)
-{
-  {
+	{
 		if (*format != '%')
 		{write(1, format, 1);
 		chara_printed++; }
@@ -32,6 +31,7 @@ int _printf(const char *format, ...)
 		else if (*format == 's')
 		{char *s = va_arg(args, char*);
 		int _strlen = 0;
+
 		while (s[_strlen] != '\0')
 			_strlen++;
 		write(1, s, _strlen);
