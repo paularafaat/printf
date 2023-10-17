@@ -1,5 +1,7 @@
 #include "main.h"
 #define BUFF_SIZE 1024
+int print_integer(int value);
+void print_buffer(char buffer[], int *buff_ind);
 /**
  * _printf - function that prints %c %s %
  * @format: pointer
