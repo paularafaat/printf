@@ -1,122 +1,66 @@
 #include "main.h"
-#define BUFF_SIZE 1024
-int print_integer(int value);
+
 void print_buffer(char buffer[], int *buff_ind);
+
 /**
- * _printf - function that prints %c %s %
- * @format: pointer
- * Return: number of chara printed
+ * _printf - Printf function
+ * @format: format.
+ * Return: Printed chars.
  */
 int _printf(const char *format, ...)
 {
-va_list args;
-	int count = 0;
-	int printed = 0;
-	int buff_ind = 0;
+	int i, printed = 0, printed_chars = 0;
+	int flags, width, precision, size, buff_ind = 0;
+	va_list list;
 	char buffer[BUFF_SIZE];
 
-	va_start(args, format);
+	if (format == NULL)
+		return (-1);
 
-	while (*format)
+	va_start(list, format);
+
+	for (i = 0; format && format[i] != '\0'; i++)
 	{
-		if (*format == '%')
+		if (format[i] != '%')
 		{
-			format++;
-
-			if (*format == '%')
-			{
-				buffer[buff_ind++] = '%';
-				if (buff_ind == BUFF_SIZE)
-				{
-					print_buffer(buffer, &buff_ind);
-					count += buff_ind;
-				}
-			}
-			else if (*format == 'c')
-			{
-				int ch = va_arg(args, int);
-
-				buffer[buff_ind++] = ch;
-				if (buff_ind == BUFF_SIZE)
-				{
-					print_buffer(buffer, &buff_ind);
-					count += buff_ind;
-				}
-			}
-			else if (*format == 's')
-			{
-				char *str = va_arg(args, char *);
-
-				while (*str)
-				{
-					buffer[buff_ind++] = *str;
-					str++;
-					if (buff_ind == BUFF_SIZE)
-					{
-						print_buffer(buffer, &buff_ind);
-						count += buff_ind;
-					}
-				}
-			}
-			else if (*format == 'd' || *format == 'i')
-			{
-				int value = va_arg(args, int);
-
-				printed = print_integer(value);
-				count += printed;
-			}
+			buffer[buff_ind++] = format[i];
+			if (buff_ind == BUFF_SIZE)
+				print_buffer(buffer, &buff_ind);
+			/* write(1, &format[i], 1);*/
+			printed_chars++;
 		}
 		else
 		{
-			buffer[buff_ind++] = *format;
-			if (buff_ind == BUFF_SIZE)
-			{
-				print_buffer(buffer, &buff_ind);
-				count += buff_ind;
-			}
+			print_buffer(buffer, &buff_ind);
+			flags = get_flags(format, &i);
+			width = get_width(format, &i, list);
+			precision = get_precision(format, &i, list);
+			size = get_size(format, &i);
+			++i;
+			printed = handle_print(format, &i, list, buffer,
+				flags, width, precision, size);
+			if (printed == -1)
+				return (-1);
+			printed_chars += printed;
 		}
-
-		format++;
 	}
 
 	print_buffer(buffer, &buff_ind);
-	count += buff_ind;
 
-	va_end(args);
+	va_end(list);
 
-	return (count);
+	return (printed_chars);
 }
-/**
- * print_integer - to print integer
- * @value: int
- * Return: integer
-*/
-int print_integer(int value)
-{
-	char buffer[32];
-	int printed = snprintf(buffer, sizeof(buffer), "%d", value);
 
-	for (int i = 0; i < printed; i++)
-	{
-		putchar(buffer[i]);
-	}
-	return (printed);
-}
 /**
- * print_buffer - function ot print buffer
- * @buffer: array
- * @buff_ind: pointer
- * Return: nothing
-*/
+ * print_buffer - Prints the contents of the buffer if it exist
+ * @buffer: Array of chars
+ * @buff_ind: Index at which to add next char, represents the length.
+ */
 void print_buffer(char buffer[], int *buff_ind)
 {
 	if (*buff_ind > 0)
-	{
-		for (int i = 0; i < *buff_ind; i++)
-		{
-			putchar(buffer[i]);
-		}
-	}
+		write(1, &buffer[0], *buff_ind);
 
 	*buff_ind = 0;
 }
