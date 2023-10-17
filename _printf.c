@@ -5,38 +5,36 @@
  * Return: number of chara printed
  */
 int _printf(const char *format, ...)
-{
-	int chara_printed = 0;
+{int chara_printed = 0;
 	va_list args;
 
 	if (format == NULL)
 		return (-1);
 	va_start(args, format);
 	while (*format)
-	{
-		if (*format != '%')
-		{write(1, format, 1);
-		chara_printed++; }
-		else
+	{if (*format == '%')
 		{format++;
-		if (*format == '\0')
-			break;
-		if (*format == '%')
-		{write(1, format, 1);
-		chara_printed++; }
-		else if (*format == 'c')
-		{char c = va_arg(args, int);
-		write(1, &c, 1);
-		chara_printed++; }
-		else if (*format == 's')
-		{char *s = va_arg(args, char*);
-		int _strlen = 0;
-
-		while (s[_strlen] != '\0')
-			_strlen++;
-		write(1, s, _strlen);
-		chara_printed += _strlen;
+			if (*format == '%') // %%
+			{write(1, "%", 1);
+				chara_printed++;
+			}
+			else if (*format == 'c')
+			{char c = (char)va_arg(args, int);
+				write(1, &c, 1);
+				chara_printed++;
+			}
+			else if (*format == 's')
+			{char *s = va_arg(args, char *);
+				int len = 0;
+				while (s[len] != '\0')
+					len++;
+				write(1, s, len);
+				chara_printed += len;
+			}
 		}
-		} format++; }
-	va_end(args);
-	return (chara_printed); }
+		else
+		{write(1, format, 1);
+			chara_printed++; }
+	format++;
+	} va_end(args);
+return chara_printed; }
