@@ -12,9 +12,11 @@ int _printf(const char *format, ...)
 		return (-1);
 	va_start(args, format);
 	while (*format)
-	{if (*format == '%')
-		{format++;
-			if (*format == '%') // %%
+	{
+		if (*format == '%')
+		{
+			format++;
+			if (*format == '%')
 			{write(1, "%", 1);
 				chara_printed++;
 			}
@@ -24,17 +26,19 @@ int _printf(const char *format, ...)
 				chara_printed++;
 			}
 			else if (*format == 's')
-			{char *s = va_arg(args, char *);
+			{
+				char *s = va_arg(args, char *);
 				int len = 0;
+
 				while (s[len] != '\0')
 					len++;
 				write(1, s, len);
-				chara_printed += len;
-			}
+				chara_printed += len; }
 		}
 		else
 		{write(1, format, 1);
 			chara_printed++; }
 	format++;
-	} va_end(args);
-return chara_printed; }
+	}
+	va_end(args);
+return (chara_printed); }
