@@ -79,7 +79,7 @@ va_list args;
 
 	va_end(args);
 
-	return count;
+	return (count);
 }
 /**
  * print_integer - to print integer
@@ -94,7 +94,7 @@ int print_integer(int value)
 	{
 		putchar(buffer[i]);
 	}
-	return printed;
+	return (printed);
 }
 /**
  * print_buffer - function ot print buffer
