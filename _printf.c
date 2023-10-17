@@ -33,6 +33,7 @@ va_list args;
 			else if (*format == 'c')
 			{
 				int ch = va_arg(args, int);
+
 				buffer[buff_ind++] = ch;
 				if (buff_ind == BUFF_SIZE)
 				{
@@ -43,6 +44,7 @@ va_list args;
 			else if (*format == 's')
 			{
 				char *str = va_arg(args, char *);
+
 				while (*str)
 				{
 					buffer[buff_ind++] = *str;
@@ -57,6 +59,7 @@ va_list args;
 			else if (*format == 'd' || *format == 'i')
 			{
 				int value = va_arg(args, int);
+
 				printed = print_integer(value);
 				count += printed;
 			}
@@ -90,6 +93,7 @@ int print_integer(int value)
 {
 	char buffer[32];
 	int printed = snprintf(buffer, sizeof(buffer), "%d", value);
+
 	for (int i = 0; i < printed; i++)
 	{
 		putchar(buffer[i]);
